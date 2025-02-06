@@ -1,0 +1,39 @@
+services:
+  localstack:
+    image: localstack/localstack:3.8.1
+    container_name: localstack
+    restart: always
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      - DEBUG=1
+      - DYNAMODB_ERROR_PROBABILITY=0.1
+      - LAMBDA_EXECUTOR=docker-reuse
+      - SQS_ENDPOINT_STRATEGY=off
+      - SERVICES=s3,sqs,ssm
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  postgres:
+    image: postgres:17.2-alpine
+    container_name: deposit_db
+    ports:
+      - "6000:5432"
+    environment:
+      POSTGRES_USER: akash_admin
+      POSTGRES_PASSWORD: akash1234
+      POSTGRES_DB: deposit_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U akash_admin" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  postgres_data:
+  redis_data:

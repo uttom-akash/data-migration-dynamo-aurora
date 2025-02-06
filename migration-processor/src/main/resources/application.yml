@@ -1,0 +1,93 @@
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      auto-commit: false
+      pool-name: core-middleware-db-pool
+
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6000/savings_platform
+    username: akash_admin
+    password: akash1234
+  jpa:
+    hibernate:
+      ddl-auto: update  # or 'validate', 'none', depending on your setup
+    properties:
+      hibernate.jdbc.batch_size: 50
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.jdbc.batch_versioned_data: true
+    show-sql: true  # Optional: to print SQL queries in the logs
+    format-sql: true  # Optional: to format the SQL output
+
+  batch:
+    jdbc:
+      initialize-schema: always
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  application:
+    name: "savings"
+dynamodb:
+  endpoint-url: "http://localhost:4566"
+  endpoint-region: "us-east-1"
+resource:
+  prefix: "dev"
+
+migration:
+  savingsAccountStepConfig:
+    numberOfPartitions: 4
+    chunkSize: 10
+    numberOfThreads: 5
+    enabled: true
+
+  assistedSavingsStepConfig:
+    numberOfPartitions: 3
+    chunkSize: 15
+    numberOfThreads: 4
+    enabled: true
+
+  eTinStepConfig:
+    numberOfPartitions: 2
+    chunkSize: 20
+    numberOfThreads: 3
+    enabled: false  # Example of a disabled step
+
+  nomineeStepConfig:
+    numberOfPartitions: 5
+    chunkSize: 25
+    numberOfThreads: 6
+    enabled: true
+
+  notificationStepConfig:
+    numberOfPartitions: 4
+    chunkSize: 10
+    numberOfThreads: 4
+    enabled: true
+
+  organizationStepConfig:
+    numberOfPartitions: 3
+    chunkSize: 15
+    numberOfThreads: 3
+    enabled: false  # Example of a disabled step
+
+  productStepConfig:
+    numberOfPartitions: 1
+    chunkSize: 12
+    numberOfThreads: 1
+    enabled: true
+
+  settingsStepConfig:
+    numberOfPartitions: 2
+    chunkSize: 8
+    numberOfThreads: 2
+    enabled: true
+
+  transactionStepConfig:
+    numberOfPartitions: 4
+    chunkSize: 10
+    numberOfThreads: 4
+    enabled: true
