@@ -8,5 +8,5 @@ public enum DepositAccountStatus {
     MATURED,
     DISBURSED,
     FAILED,
-    CANCELLED;
+    CANCELLED
 }

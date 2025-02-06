@@ -9,7 +9,7 @@ public enum DpsAccountStatus {
     MATURED,
     DISBURSED,
     FAILED,
-    CANCELLED;
+    CANCELLED
 }
 
 

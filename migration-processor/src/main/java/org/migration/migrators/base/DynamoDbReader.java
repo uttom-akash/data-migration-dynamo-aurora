@@ -21,7 +21,7 @@ public abstract class DynamoDbReader<EntityType> implements ItemReader<EntityTyp
     private Iterator<EntityType> iterator;
     private Map<String, AttributeValue> lastEvaluatedKey;
     private boolean fetchMore;
-    private String tableName;
+    private final String tableName;
     @Value("${resource.prefix}")
     private String appProfile;
     @Value("${spring.application.name}")
@@ -79,6 +79,6 @@ public abstract class DynamoDbReader<EntityType> implements ItemReader<EntityTyp
     }
 
     private String getTableName() {
-        return new StringBuilder(appProfile).append("-").append(appName).append(tableName).toString();
+        return appProfile + "-" + appName + tableName;
     }
 }
