@@ -18,38 +18,22 @@ services:
 
   postgres:
     image: postgres:17.2-alpine
-    container_name: platform_db
+    container_name: deposit_db
     ports:
       - "6000:5432"
     environment:
-      POSTGRES_USER: bkash_admin
-      POSTGRES_PASSWORD: bkash1234
-      POSTGRES_DB: savings_platform
+      POSTGRES_USER: akash_admin
+      POSTGRES_PASSWORD: akash1234
+      POSTGRES_DB: deposit_db
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U bkash_admin" ]
+      test: [ "CMD-SHELL", "pg_isready -U akash_admin" ]
       interval: 10s
       timeout: 5s
       retries: 5
-      
-  redis:
-    image: redis:7.0-alpine
-    container_name: redis
-    ports:
-      - "6380:6379"
-    command: ["redis-server", "--appendonly", "yes"]
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "redis1234", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      
 volumes:
   postgres_data:
   redis_data:
