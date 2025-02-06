@@ -1,0 +1,9 @@
+package com.bkash.savings.models.dto.gql.identity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record IdentityResponse(
+        @JsonProperty("data")
+        Data data
+) {
+}

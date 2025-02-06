@@ -1,0 +1,76 @@
+{
+  "dev-savings-payment-history": [
+    {
+      "PutRequest": {
+        "Item": {
+          "savingsId": {
+            "S": "829bcbe4-0f80-4132-a509-ae21f68b014e"
+          },
+          "paymentId": {
+            "N": "1"
+          },
+          "amount": {
+            "S": "500.00"
+          },
+          "cpsOriginatorConversationId": {
+            "S": ""
+          },
+          "dueDate": {
+            "S": "2021-09-01"
+          },
+          "fiAccountNo": {
+            "S": ""
+          },
+          "firstPayment": {
+            "S": "true"
+          },
+          "installmentType": {
+            "S": ""
+          },
+          "nextPaymentDate": {
+            "S": "2021-10-01"
+          },
+          "organizationCode": {
+            "S": "IDLC"
+          },
+          "paymentStatus": {
+            "S": "RPP_PAYMENT_WEBHOOK_SUCCEEDED"
+          },
+          "refunded": {
+            "S": ""
+          },
+          "reverseTrxDate": {
+            "S": ""
+          },
+          "reverseTrxId": {
+            "S": ""
+          },
+          "rppPaymentCallbackTime": {
+            "S": "2021-09-02 14:00:06:487 +0600"
+          },
+          "rppPaymentId": {
+            "N": "2844"
+          },
+          "rppSubscriptionId": {
+            "S": "1282"
+          },
+          "rppSubscriptionRequestId": {
+            "S": "829bcbe4-0f80-4132-a509-ae21f68b014e"
+          },
+          "timeStamp": {
+            "S": "2021-09-02 14:00:06:000 +0600"
+          },
+          "trxDate": {
+            "S": "2021-09-01 17:28:01:000 +0600"
+          },
+          "trxId": {
+            "S": "8I1204W42A"
+          },
+          "trxShortDate": {
+            "S": "2021-09-01"
+          }
+        }
+      }
+    }
+  ]
+}
