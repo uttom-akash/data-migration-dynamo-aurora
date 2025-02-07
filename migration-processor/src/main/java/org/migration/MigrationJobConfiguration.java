@@ -15,15 +15,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class JobConfiguration {
+public class MigrationJobConfiguration {
 
     private final DepositNomineeMigrationStep nomineeMigrationStep;
     private final DepositAccountMigrationStep savingsAccountMigrationStep;
     private final TransactionMigrationStep transactionMigrationStep;
 
-    public JobConfiguration(DepositNomineeMigrationStep nomineeMigrationStep,
-                            DepositAccountMigrationStep savingsAccountMigrationStep,
-                            TransactionMigrationStep dpsTransactionMigrationStep) {
+    public MigrationJobConfiguration(DepositNomineeMigrationStep nomineeMigrationStep,
+                                     DepositAccountMigrationStep savingsAccountMigrationStep,
+                                     TransactionMigrationStep dpsTransactionMigrationStep) {
         this.nomineeMigrationStep = nomineeMigrationStep;
         this.savingsAccountMigrationStep = savingsAccountMigrationStep;
         this.transactionMigrationStep = dpsTransactionMigrationStep;

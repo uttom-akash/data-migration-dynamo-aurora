@@ -1,4 +1,4 @@
-package org.migration.in_memory_data;
+package org.migration.in_memory_dataset;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -25,7 +25,7 @@ public class InMemoryDepositNomineeManagement {
     public void beforeStep() {
         nomineeEntities = new ArrayList<>();
 
-        String jpql = "SELECT a FROM NomineeEntity a"; // JPQL query, adjust if needed
+        String jpql = "SELECT a FROM NomineeEntity a";
 
         Query query = entityManager.createQuery(jpql);
         var results = query.getResultList();

@@ -17,14 +17,19 @@ public class DynamoDbConfig {
     @Value("${dynamodb.endpoint-region}")
     private String endpointRegion;
 
-    //    Todo-akash : replace with real stuffs
+    @Value("${dynamodb.access-key}")
+    private String accessKey;
+
+    @Value("${dynamodb.access-secret-key}")
+    private String accessSecretKey;
+
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AmazonDynamoDBClientBuilder.EndpointConfiguration(
-                        "http://localhost:4566", "us-east-1")) // LocalStack's DynamoDB endpoint
+                        endpointUrl, endpointRegion)) // LocalStack's DynamoDB endpoint
                 .withCredentials(new AWSStaticCredentialsProvider(
-                        new BasicAWSCredentials("dummyAccessKey", "dummySecretKey"))) // Dummy credentials for LocalStack
+                        new BasicAWSCredentials(accessKey, accessSecretKey))) // Dummy credentials for LocalStack
                 .build();
     }
 

@@ -16,14 +16,12 @@ import java.util.Map;
 @StepScope
 public class DepositAccountReader extends DynamoDbReader<DpsAccountEntity> {
 
-
     private final DynamoDBMapper dynamoDBMapper;
 
     public DepositAccountReader(DynamoDBMapper dynamoDBMapper, AmazonDynamoDB amazonDynamoDB) {
         super(amazonDynamoDB, DynamoDBTableNames.TABLE_ACCOUNT);
         this.dynamoDBMapper = dynamoDBMapper;
     }
-
 
     @Override
     protected DpsAccountEntity marshallIntoObject(Map<String, AttributeValue> item) {
