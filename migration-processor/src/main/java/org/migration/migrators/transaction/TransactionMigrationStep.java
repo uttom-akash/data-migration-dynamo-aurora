@@ -43,7 +43,7 @@ public class TransactionMigrationStep extends MigrationStep {
         var transactionStepConfig = migrationConfig.getTransactionStepConfig();
 
         var step = new StepBuilder(StepNames.TRANSACTION_STEP, jobRepository)
-                .<PaymentLog, TransactionEntity>chunk(10, transactionManager)
+                .<PaymentLog, TransactionEntity>chunk(transactionStepConfig.getChunkSize(), transactionManager)
                 .listener(inMemorySavingsAccountManagement)
                 .listener(inMemoryDepositAccountManagement)
                 .reader(paymentHistoryReader)

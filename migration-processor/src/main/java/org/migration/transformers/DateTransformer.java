@@ -1,27 +1,39 @@
-package org.migration.mappers;
+package org.migration.transformers;
 
-import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class DateConversion {
+@Slf4j
+public class DateTransformer {
+
+    private static final ZonedDateTime DEFAULT_ZONED_DATE_TIME = ZonedDateTime.parse("1988-11-26 12:00:00:000 +0000");
+    private static final LocalDate DEFAULT_LOCAL_DATE = LocalDate.parse("1988-11-26");
 
     public static ZonedDateTime toZonedDateTime(String date) {
-        if (date == null) {
-            return ZonedDateTime.now(ZoneOffset.UTC);  // Return default ZonedDateTime (current time in UTC)
-        }
+        if (date == null) return null;
 
-        // Use a formatter to parse the date, expecting a pattern like "yyyy-MM-dd HH:mm:ss:SSS Z"
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS Z");
 
         try {
             return ZonedDateTime.parse(date, formatter);
         } catch (DateTimeParseException e) {
-            // Log the exception if necessary or handle it in a way that fits your needs
-            return ZonedDateTime.now(ZoneOffset.UTC);  // Return default value in case of parse failure
+            return null;
+        }
+    }
+
+    public static ZonedDateTime toZonedDateTimeOrDefault(String date) {
+        if (date == null) return DEFAULT_ZONED_DATE_TIME;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS Z");
+
+        try {
+            return ZonedDateTime.parse(date, formatter);
+        } catch (DateTimeParseException e) {
+            return DEFAULT_ZONED_DATE_TIME;
         }
     }
 
@@ -37,21 +49,4 @@ public class DateConversion {
             return LocalDate.now();  // Return default value in case of parse failure
         }
     }
-
-    public static BigDecimal toBigDecimal(String value) {
-        if(value ==null) return null;
-
-        return new BigDecimal(value);
-    }
-
-    public static Double toDouble(String value) {
-        if(value ==null) return null;
-
-        return Double.parseDouble(value);
-    }
-
-    public static String getOrEmptyString(String value){
-        return  value == null ? " " : value;
-    }
-
 }

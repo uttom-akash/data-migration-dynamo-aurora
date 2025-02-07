@@ -4,10 +4,10 @@ package org.migration.migrators.deposit_account;
 import org.aurora.postgres.deposit_account.DepositAccount;
 import org.dynamo.models.dps_account.DpsAccountEntity;
 import org.migration.in_memory_dataset.InMemoryDepositNomineeManagement;
-import org.migration.mappers.DateConversion;
+import org.migration.transformers.DateTransformer;
+import org.migration.transformers.TypeTransformer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
-import java.util.UUID;
 
 @Component
 public class DepositAccountProcessor implements ItemProcessor<DpsAccountEntity, DepositAccount> {
@@ -20,31 +20,33 @@ public class DepositAccountProcessor implements ItemProcessor<DpsAccountEntity, 
     }
 
     @Override
-    public DepositAccount process(DpsAccountEntity savingsAccountEntity) throws Exception {
+    public DepositAccount process(DpsAccountEntity dpsAccountEntity) throws Exception {
 
         var nominee = inMemoryNomineeManagement
                 .getNomineeEntities()
                 .stream()
-                .filter(nom -> nom.getNidNumber().equals(savingsAccountEntity.getNominee().getNidNumber()))
+                .filter(nom -> nom.getNidNumber().equals(dpsAccountEntity.getNominee().getNidNumber()))
                 .findFirst()
                 .orElse(null);
 
+        if (nominee == null) return null;
+
         return DepositAccount.builder()
-                .savingsId(savingsAccountEntity.getSavingsId())
-                .walletId(savingsAccountEntity.getWalletId())
-                .openingDate(DateConversion.toZonedDateTime(savingsAccountEntity.getOpeningDate()))
-                .endDate(DateConversion.toZonedDateTime(savingsAccountEntity.getEndDate()))
-                .maturityDate(DateConversion.toZonedDateTime(savingsAccountEntity.getMaturityDate()))
-                .cancelRequestTime(DateConversion.toZonedDateTime(savingsAccountEntity.getCancelRequestTime()))
-                .cancelReason(savingsAccountEntity.getCancelReason())
-                .cancellationDate(DateConversion.toZonedDateTime(savingsAccountEntity.getCancellationDate()))
-                .cycleStartDate(DateConversion.toLocalDate(savingsAccountEntity.getCycleStartDate()))
-                .receivableAmount(DateConversion.toBigDecimal(savingsAccountEntity.getReceivableAmount()))
-                .maturityAmount(DateConversion.toBigDecimal(savingsAccountEntity.getMaturityAmount()))
-                .instalmentPercentage(DateConversion.toDouble(savingsAccountEntity.getInstalmentPercentage()))
-                .productCode(savingsAccountEntity.getProductCode())
-                .nomineeId(nominee == null ? UUID.fromString("cb0e71ec-d79b-4064-af7e-85b295f725f6") : nominee.getId())
-                .organizationCode(savingsAccountEntity.getOrganizationCode())
+                .savingsId(dpsAccountEntity.getSavingsId())
+                .walletId(dpsAccountEntity.getWalletId())
+                .openingDate(DateTransformer.toZonedDateTime(dpsAccountEntity.getOpeningDate()))
+                .endDate(DateTransformer.toZonedDateTime(dpsAccountEntity.getEndDate()))
+                .maturityDate(DateTransformer.toZonedDateTime(dpsAccountEntity.getMaturityDate()))
+                .cancelRequestTime(DateTransformer.toZonedDateTime(dpsAccountEntity.getCancelRequestTime()))
+                .cancelReason(dpsAccountEntity.getCancelReason())
+                .cancellationDate(DateTransformer.toZonedDateTime(dpsAccountEntity.getCancellationDate()))
+                .cycleStartDate(DateTransformer.toLocalDate(dpsAccountEntity.getCycleStartDate()))
+                .receivableAmount(TypeTransformer.toBigDecimal(dpsAccountEntity.getReceivableAmount()))
+                .maturityAmount(TypeTransformer.toBigDecimal(dpsAccountEntity.getMaturityAmount()))
+                .instalmentPercentage(TypeTransformer.toDouble(dpsAccountEntity.getInstalmentPercentage()))
+                .productCode(dpsAccountEntity.getProductCode())
+                .nomineeId(TypeTransformer.toUUIDOrDefault(nominee.getId()))
+                .organizationCode(dpsAccountEntity.getOrganizationCode())
                 .build();
     }
 }

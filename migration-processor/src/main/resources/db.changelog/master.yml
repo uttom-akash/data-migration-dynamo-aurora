@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/changes
+      errorIfMissingOrEmpty: true
+#  - includeAll:
+#      path: db/changelog/local-dev
+#      errorIfMissingOrEmpty: false

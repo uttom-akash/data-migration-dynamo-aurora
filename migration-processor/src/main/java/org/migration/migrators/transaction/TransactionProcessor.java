@@ -6,7 +6,8 @@ import org.aurora.postgres.transaction.*;
 import org.dynamo.models.paymentlog.PaymentLog;
 import org.dynamo.models.paymentlog.PaymentStatus;
 import org.migration.in_memory_dataset.InMemoryDepositAccountManagement;
-import org.migration.mappers.DateConversion;
+import org.migration.transformers.DateTransformer;
+import org.migration.transformers.TypeTransformer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
@@ -55,14 +56,14 @@ public class TransactionProcessor implements ItemProcessor<PaymentLog, Transacti
                     .status(getCpsTransactionStatus(paymentHistory))
                     .savingsId(paymentHistory.getSavingsId())
                     .amount(new BigDecimal(paymentHistory.getAmount()))
-                    .correlationId(paymentHistory.getCpsOriginatorConversationId() == null ? cor : paymentHistory.getCpsOriginatorConversationId())
+                .correlationId(TypeTransformer.getOrDefaultUuid(paymentHistory.getCpsOriginatorConversationId()))
                     .trxChannel(TransactionLogChannel.DPS)
                     .trxType(getCpsTransactionType(paymentHistory))
                     .trxId(paymentHistory.getTrxId())
                     .walletNumber(savingsAccount.getWalletId())
                     .receiver(paymentHistory.getOrganizationCode())
-                    .trxDate(DateConversion.toZonedDateTime(paymentHistory.getTrxDate()))
-                    .trxDueDate(DateConversion.toLocalDate(paymentHistory.getDueDate()))
+                .trxDate(DateTransformer.toZonedDateTime(paymentHistory.getTrxDate()))
+                .trxDueDate(DateTransformer.toLocalDate(paymentHistory.getDueDate()))
                     .trxSource(TransactionSource.TMS)
                     .referenceCpsTrxId(paymentHistory.getReverseTrxId())
                     .orgCode(paymentHistory.getOrganizationCode())
@@ -87,14 +88,14 @@ public class TransactionProcessor implements ItemProcessor<PaymentLog, Transacti
     private DepositTransaction createDpsTrx(PaymentLog paymentHistory, DepositAccount savingsAccount) {
         return DepositTransaction.builder()
                 .savingsId(paymentHistory.getSavingsId())
-                .cpsTrxId(paymentHistory.getTrxId() == null ? "" : paymentHistory.getTrxId())
-                .cpsTrxDate(DateConversion.toZonedDateTime(paymentHistory.getTrxDate()))
-                .amount(new BigDecimal(paymentHistory.getAmount()))
+                .cpsTrxId(TypeTransformer.getOrDefaultUuid(paymentHistory.getTrxId()))
+                .cpsTrxDate(DateTransformer.toZonedDateTime(paymentHistory.getTrxDate()))
+                .amount(TypeTransformer.toBigDecimal(paymentHistory.getAmount()))
                 .status(getDpsTransactionStatus(paymentHistory))
-                .dueDate(DateConversion.toLocalDate(paymentHistory.getDueDate()))
+                .dueDate(DateTransformer.toLocalDate(paymentHistory.getDueDate()))
                 .referenceCpsConversationId(null)
                 .referenceCpsTrxId(paymentHistory.getReverseTrxId())
-                .referenceCpsTrxDate(DateConversion.toZonedDateTime(paymentHistory.getReverseTrxDate()))
+                .referenceCpsTrxDate(DateTransformer.toZonedDateTime(paymentHistory.getReverseTrxDate()))
                 .type(getDpsTransactionType(paymentHistory))
                 .orgCode(paymentHistory.getOrganizationCode())
                 .trxSource(TransactionSource.TMS)
@@ -105,14 +106,14 @@ public class TransactionProcessor implements ItemProcessor<PaymentLog, Transacti
     private DepositTransaction CreateRefundedDpsTrx(PaymentLog paymentHistory, DepositAccount savingsAccount) {
         return DepositTransaction.builder()
                 .savingsId(paymentHistory.getSavingsId())
-                .cpsTrxId(paymentHistory.getReverseTrxId() == null ? "" : paymentHistory.getReverseTrxId())
-                .cpsTrxDate(DateConversion.toZonedDateTime(paymentHistory.getReverseTrxDate()))
-                .amount(new BigDecimal(paymentHistory.getAmount()))
+                .cpsTrxId(TypeTransformer.getOrDefaultUuid(paymentHistory.getReverseTrxId()))
+                .cpsTrxDate(DateTransformer.toZonedDateTime(paymentHistory.getReverseTrxDate()))
+                .amount(TypeTransformer.toBigDecimal(paymentHistory.getAmount()))
                 .status(getSecondDpsStatus(paymentHistory))
-                .dueDate(DateConversion.toLocalDate(paymentHistory.getDueDate()))
+                .dueDate(DateTransformer.toLocalDate(paymentHistory.getDueDate()))
                 .referenceCpsConversationId(null)
                 .referenceCpsTrxId(paymentHistory.getTrxId())
-                .referenceCpsTrxDate(DateConversion.toZonedDateTime(paymentHistory.getTrxDate()))
+                .referenceCpsTrxDate(DateTransformer.toZonedDateTime(paymentHistory.getTrxDate()))
                 .type(TransactionType.REFUND)
                 .orgCode(paymentHistory.getOrganizationCode())
                 .trxSource(TransactionSource.RPS)

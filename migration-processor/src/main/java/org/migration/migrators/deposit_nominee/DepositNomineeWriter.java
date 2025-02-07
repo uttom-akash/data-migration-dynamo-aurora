@@ -3,6 +3,7 @@ package org.migration.migrators.deposit_nominee;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.aurora.postgres.deposit_nominee.DepositNominee;
 import org.migration.configs.PostgresTableNames;
 import org.migration.migrators.base.PostgresWriter;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class DepositNomineeWriter extends PostgresWriter implements ItemWriter<DepositNominee> {
     @PersistenceContext
     private EntityManager entityManager;
@@ -29,7 +31,7 @@ public class DepositNomineeWriter extends PostgresWriter implements ItemWriter<D
 
         entityManager.flush();
 
-        System.out.println("Writing DpsTransactionEntity");
-        System.out.println(items.getItems());
+        log.debug("Writing DepositNominee");
+        log.debug("" + items.getItems().size());
     }
 }
