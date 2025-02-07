@@ -45,6 +45,6 @@ public class DepositNomineeMigrationStep extends MigrationStep {
                 .transactionManager(transactionManager)
                 .build();
 
-        return createPartitionedStep(StepNames.AssistedSavings, step, jobRepository, nomineeStepConfig);
+        return createPartitionedStep(StepNames.NOMINEE_STEP, step, jobRepository, nomineeStepConfig);
     }
 }

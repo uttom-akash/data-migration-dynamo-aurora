@@ -75,7 +75,6 @@ public class DepositAccount extends BaseEntity {
     @Column(name = "cycle_start_date", nullable = false)
     private LocalDate cycleStartDate;
 
-
     @Column(name = "receivable_amount")
     private BigDecimal receivableAmount;
 
@@ -100,14 +99,4 @@ public class DepositAccount extends BaseEntity {
 
     @Column(name = "organization_code", nullable = false)
     private String organizationCode;
-
-    @Column(name = "first_trx_originator_conversation_id")
-    private String firstTrxOriginatorConversationId;
-
-    @Column(name = "first_trx_id")
-    private String firstTrxId;
-
-    @Column(name = "first_trx_date_time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @TimeZoneStorage(TimeZoneStorageType.NATIVE)
-    private ZonedDateTime firstTrxDateTime;
 }

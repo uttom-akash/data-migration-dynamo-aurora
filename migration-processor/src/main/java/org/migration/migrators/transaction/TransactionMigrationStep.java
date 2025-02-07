@@ -4,7 +4,7 @@ package org.migration.migrators.transaction;
 import org.dynamo.models.paymentlog.PaymentLog;
 import org.migration.configs.MigrationConfig;
 import org.migration.configs.StepNames;
-import org.migration.in_memory_data.InMemoryDepositAccountManagement;
+import org.migration.in_memory_dataset.InMemoryDepositAccountManagement;
 import org.migration.migrators.base.MigrationStep;
 import org.migration.migrators.base.ResourcePartitioner;
 import org.springframework.batch.core.Step;
@@ -21,18 +21,20 @@ public class TransactionMigrationStep extends MigrationStep {
     private final TransactionProcessor dpsTransactionProcessor;
     private final TransactionWriter dpsTransactionWriter;
     private final InMemoryDepositAccountManagement inMemorySavingsAccountManagement;
+    private final InMemoryDepositAccountManagement inMemoryDepositAccountManagement;
 
     public TransactionMigrationStep(ResourcePartitioner resourcePartitioner,
                                     PaymentLogReader paymentHistoryReader,
                                     TransactionProcessor dpsTransactionProcessor,
                                     TransactionWriter dpsTransactionWriter,
                                     MigrationConfig migrationConfig,
-                                    InMemoryDepositAccountManagement inMemorySavingsAccountManagement) {
+                                    InMemoryDepositAccountManagement inMemorySavingsAccountManagement, InMemoryDepositAccountManagement inMemoryDepositAccountManagement) {
         super(resourcePartitioner, migrationConfig);
         this.paymentHistoryReader = paymentHistoryReader;
         this.dpsTransactionProcessor = dpsTransactionProcessor;
         this.dpsTransactionWriter = dpsTransactionWriter;
         this.inMemorySavingsAccountManagement = inMemorySavingsAccountManagement;
+        this.inMemoryDepositAccountManagement = inMemoryDepositAccountManagement;
     }
 
     @Bean
@@ -43,6 +45,7 @@ public class TransactionMigrationStep extends MigrationStep {
         var step = new StepBuilder(StepNames.TRANSACTION_STEP, jobRepository)
                 .<PaymentLog, TransactionEntity>chunk(10, transactionManager)
                 .listener(inMemorySavingsAccountManagement)
+                .listener(inMemoryDepositAccountManagement)
                 .reader(paymentHistoryReader)
                 .processor(dpsTransactionProcessor)
                 .writer(dpsTransactionWriter)
@@ -51,12 +54,5 @@ public class TransactionMigrationStep extends MigrationStep {
 
 
         return createPartitionedStep(StepNames.TRANSACTION_STEP, step, jobRepository, transactionStepConfig);
-//
-//                new StepBuilder(stepName, jobRepository)
-//                .partitioner(stepName, resourcePartitioner)
-//                .step(step)
-//                .gridSize(4)
-//                .taskExecutor(taskExecutor())
-//                .build();
     }
 }

@@ -72,10 +72,6 @@ public class TransactionLog extends BaseEntity {
     /** This date represents the due date of a missed deposit. */
     @Column(name = "trx_due_date", nullable = true)
     private LocalDate trxDueDate;
-
-    @Column(name = "request_initiated_time", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @TimeZoneStorage(TimeZoneStorageType.NATIVE)
-    private ZonedDateTime request_initiated_time;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_source", length = 10, nullable = false)
