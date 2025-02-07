@@ -1,6 +1,7 @@
 package org.migration.migrators.deposit_nominee;
 
 
+
 import org.aurora.postgres.deposit_nominee.DepositNominee;
 import org.dynamo.models.dps_nominee.Nominee;
 import org.migration.configs.MigrationConfig;
