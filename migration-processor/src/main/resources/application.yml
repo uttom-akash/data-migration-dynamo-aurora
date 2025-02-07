@@ -30,7 +30,7 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
   application:
-    name: "savings"
+    name: "dps"
 dynamodb:
   endpoint-url: "http://localhost:4566"
   endpoint-region: "us-east-1"
@@ -44,46 +44,10 @@ migration:
     numberOfThreads: 5
     enabled: true
 
-  assistedSavingsStepConfig:
-    numberOfPartitions: 3
-    chunkSize: 15
-    numberOfThreads: 4
-    enabled: true
-
-  eTinStepConfig:
-    numberOfPartitions: 2
-    chunkSize: 20
-    numberOfThreads: 3
-    enabled: false  # Example of a disabled step
-
   nomineeStepConfig:
     numberOfPartitions: 5
     chunkSize: 25
     numberOfThreads: 6
-    enabled: true
-
-  notificationStepConfig:
-    numberOfPartitions: 4
-    chunkSize: 10
-    numberOfThreads: 4
-    enabled: true
-
-  organizationStepConfig:
-    numberOfPartitions: 3
-    chunkSize: 15
-    numberOfThreads: 3
-    enabled: false  # Example of a disabled step
-
-  productStepConfig:
-    numberOfPartitions: 1
-    chunkSize: 12
-    numberOfThreads: 1
-    enabled: true
-
-  settingsStepConfig:
-    numberOfPartitions: 2
-    chunkSize: 8
-    numberOfThreads: 2
     enabled: true
 
   transactionStepConfig:

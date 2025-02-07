@@ -1,4 +1,4 @@
-package org.migration.in_memory_data;
+package org.migration.in_memory_dataset;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

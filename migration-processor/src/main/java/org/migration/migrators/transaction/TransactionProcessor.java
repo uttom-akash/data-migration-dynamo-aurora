@@ -5,7 +5,7 @@ import org.aurora.postgres.deposit_account.DepositAccount;
 import org.aurora.postgres.transaction.*;
 import org.dynamo.models.paymentlog.PaymentLog;
 import org.dynamo.models.paymentlog.PaymentStatus;
-import org.migration.in_memory_data.InMemoryDepositAccountManagement;
+import org.migration.in_memory_dataset.InMemoryDepositAccountManagement;
 import org.migration.mappers.DateConversion;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
@@ -35,9 +35,8 @@ public class TransactionProcessor implements ItemProcessor<PaymentLog, Transacti
 
         if(savingsAccount == null)  return null;
 
-        int bkPlanNo = 0;
 
-        List<DepositTransaction> dps = createDpsTransaction(paymentHistory, bkPlanNo, savingsAccount);
+        List<DepositTransaction> dps = createDpsTransaction(paymentHistory, savingsAccount);
 
         TransactionLog cps =  createCpsTransactionEntity(paymentHistory, savingsAccount);
 
@@ -64,29 +63,28 @@ public class TransactionProcessor implements ItemProcessor<PaymentLog, Transacti
                     .receiver(paymentHistory.getOrganizationCode())
                     .trxDate(DateConversion.toZonedDateTime(paymentHistory.getTrxDate()))
                     .trxDueDate(DateConversion.toLocalDate(paymentHistory.getDueDate()))
-                    .request_initiated_time(DateConversion.toZonedDateTime(paymentHistory.getTrxDate()))
                     .trxSource(TransactionSource.TMS)
                     .referenceCpsTrxId(paymentHistory.getReverseTrxId())
                     .orgCode(paymentHistory.getOrganizationCode())
                     .build();
     }
 
-    private List<DepositTransaction> createDpsTransaction(PaymentLog paymentHistory, int bkPlanNo, DepositAccount savingsAccount) {
+    private List<DepositTransaction> createDpsTransaction(PaymentLog paymentHistory, DepositAccount savingsAccount) {
 
         var dpsTrxs = new ArrayList<DepositTransaction>();
 
         if(!doesAddOneDpsTrx(paymentHistory)) return dpsTrxs;
 
-        dpsTrxs.add(createDpsTrx(paymentHistory, bkPlanNo, savingsAccount));
+        dpsTrxs.add(createDpsTrx(paymentHistory, savingsAccount));
 
         if(!doesAddTwoDpsTrx(paymentHistory)) return dpsTrxs;
 
-        dpsTrxs.add(CreateRefundedDpsTrx(paymentHistory, bkPlanNo,savingsAccount));
+        dpsTrxs.add(CreateRefundedDpsTrx(paymentHistory,savingsAccount));
 
         return dpsTrxs;
     }
 
-    private DepositTransaction createDpsTrx(PaymentLog paymentHistory, int bkPlanNo, DepositAccount savingsAccount) {
+    private DepositTransaction createDpsTrx(PaymentLog paymentHistory, DepositAccount savingsAccount) {
         return DepositTransaction.builder()
                 .savingsId(paymentHistory.getSavingsId())
                 .cpsTrxId(paymentHistory.getTrxId() == null ? "" : paymentHistory.getTrxId())
@@ -94,21 +92,17 @@ public class TransactionProcessor implements ItemProcessor<PaymentLog, Transacti
                 .amount(new BigDecimal(paymentHistory.getAmount()))
                 .status(getDpsTransactionStatus(paymentHistory))
                 .dueDate(DateConversion.toLocalDate(paymentHistory.getDueDate()))
-                .bkPlanNo(bkPlanNo)
-//                  .fiTrxId(paymentHistory.getFiTrxId())
-//                  .fiTrxDate(toZonedDateTime(paymentHistory.getFiTrxDate()))
                 .referenceCpsConversationId(null)
                 .referenceCpsTrxId(paymentHistory.getReverseTrxId())
                 .referenceCpsTrxDate(DateConversion.toZonedDateTime(paymentHistory.getReverseTrxDate()))
                 .type(getDpsTransactionType(paymentHistory))
                 .orgCode(paymentHistory.getOrganizationCode())
                 .trxSource(TransactionSource.TMS)
-                .rppPaymentId(paymentHistory.getRppPaymentId())
                 .remarks(paymentHistory.getMessage())
                 .build();
     }
 
-    private DepositTransaction CreateRefundedDpsTrx(PaymentLog paymentHistory, int bkPlanNo, DepositAccount savingsAccount) {
+    private DepositTransaction CreateRefundedDpsTrx(PaymentLog paymentHistory, DepositAccount savingsAccount) {
         return DepositTransaction.builder()
                 .savingsId(paymentHistory.getSavingsId())
                 .cpsTrxId(paymentHistory.getReverseTrxId() == null ? "" : paymentHistory.getReverseTrxId())
@@ -116,26 +110,15 @@ public class TransactionProcessor implements ItemProcessor<PaymentLog, Transacti
                 .amount(new BigDecimal(paymentHistory.getAmount()))
                 .status(getSecondDpsStatus(paymentHistory))
                 .dueDate(DateConversion.toLocalDate(paymentHistory.getDueDate()))
-                .bkPlanNo(bkPlanNo)
                 .referenceCpsConversationId(null)
                 .referenceCpsTrxId(paymentHistory.getTrxId())
                 .referenceCpsTrxDate(DateConversion.toZonedDateTime(paymentHistory.getTrxDate()))
                 .type(TransactionType.REFUND)
                 .orgCode(paymentHistory.getOrganizationCode())
                 .trxSource(TransactionSource.RPS)
-                .rppPaymentId(paymentHistory.getRppPaymentId())
                 .remarks(paymentHistory.getMessage())
                 .build();
     }
-
-
-//    private TransactionType getTransactionType(PaymentEntity item){
-//
-//        if(item.isFirstPayment()) return TransactionType.FIRST_DEPOSIT;
-//        if(item.getInstallmentType() !=null && item.getInstallmentType().equals("MissedPayment")) return TransactionType.MISSED_DEPOSIT;
-//
-//        return  TransactionType.REGULAR_DEPOSIT;
-//    }
 
     private Boolean doesAddOneDpsTrx(PaymentLog item){
 

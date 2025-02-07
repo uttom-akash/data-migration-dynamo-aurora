@@ -1,6 +1,7 @@
 package org.migration.migrators.deposit_nominee;
 
 
+
 import org.aurora.postgres.deposit_nominee.DepositNominee;
 import org.dynamo.models.dps_nominee.Nominee;
 import org.migration.configs.MigrationConfig;
@@ -45,6 +46,6 @@ public class DepositNomineeMigrationStep extends MigrationStep {
                 .transactionManager(transactionManager)
                 .build();
 
-        return createPartitionedStep(StepNames.AssistedSavings, step, jobRepository, nomineeStepConfig);
+        return createPartitionedStep(StepNames.NOMINEE_STEP, step, jobRepository, nomineeStepConfig);
     }
 }

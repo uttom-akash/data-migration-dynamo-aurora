@@ -69,9 +69,6 @@ public class DepositTransaction extends BaseEntity {
     @Column(name = "transaction_source", length = 10, nullable = false)
     private TransactionSource trxSource;
 
-    @Column(name = "rpp_payment_id")
-    private Long rppPaymentId;
-
     @Column(name = "remarks")
     private String remarks;
 }
