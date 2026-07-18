@@ -1,9 +1,7 @@
 package org.migration;
 
 
-import org.migration.migrators.deposit_account.DepositAccountMigrationStep;
-import org.migration.migrators.deposit_nominee.DepositNomineeMigrationStep;
-import org.migration.migrators.transaction.TransactionMigrationStep;
+import org.migration.migrators.product.ProductMigrationStep;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -17,24 +15,16 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class MigrationJobConfiguration {
 
-    private final DepositNomineeMigrationStep nomineeMigrationStep;
-    private final DepositAccountMigrationStep savingsAccountMigrationStep;
-    private final TransactionMigrationStep transactionMigrationStep;
+    private final ProductMigrationStep productMigrationStep;
 
-    public MigrationJobConfiguration(DepositNomineeMigrationStep nomineeMigrationStep,
-                                     DepositAccountMigrationStep savingsAccountMigrationStep,
-                                     TransactionMigrationStep dpsTransactionMigrationStep) {
-        this.nomineeMigrationStep = nomineeMigrationStep;
-        this.savingsAccountMigrationStep = savingsAccountMigrationStep;
-        this.transactionMigrationStep = dpsTransactionMigrationStep;
+    public MigrationJobConfiguration(ProductMigrationStep productMigrationStep) {
+        this.productMigrationStep = productMigrationStep;
     }
 
     @Bean
     public Job migrationJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("Migration-Job", jobRepository)
-                .start(nomineeMigrationStep.createNomineeMigration(jobRepository, transactionManager))
-                .next(savingsAccountMigrationStep.createSavingsAccountMigration(jobRepository, transactionManager))
-                .next(transactionMigrationStep.createTransactionMigration(jobRepository, transactionManager))
+                .start(productMigrationStep.createProductMigration(jobRepository, transactionManager))
                 .build();
     }
 
@@ -42,7 +32,6 @@ public class MigrationJobConfiguration {
     public CommandLineRunner run(JobLauncher jobLauncher, Job migrationJob) {
 
         return args -> {
-            System.out.println("Running job...");
             jobLauncher.run(
                     migrationJob,
                     new JobParametersBuilder()

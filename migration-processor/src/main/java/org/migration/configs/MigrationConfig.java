@@ -10,10 +10,5 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class MigrationConfig {
-    private StepConfig savingsAccountStepConfig;
-    private StepConfig nomineeStepConfig;
-    private StepConfig transactionStepConfig;
+    private StepConfig productStepConfig;
 }
-
-
-

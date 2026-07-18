@@ -2,6 +2,7 @@ package org.aurora.postgres.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Version;
 import org.hibernate.annotations.TimeZoneStorage;
 import org.hibernate.annotations.TimeZoneStorageType;
@@ -16,8 +17,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-//@MappedSuperclass
-//@EntityListeners(AuditingEntityListener.class)
+@MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)

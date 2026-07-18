@@ -10,12 +10,12 @@ spring:
       pool-name: core-middleware-db-pool
 
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6000/savings_platform
+    url: jdbc:postgresql://localhost:6000/deposit_db
     username: akash_admin
     password: akash1234
   jpa:
     hibernate:
-      ddl-auto: update  # or 'validate', 'none', depending on your setup
+      ddl-auto: none  # schema is owned by Liquibase
     properties:
       hibernate.jdbc.batch_size: 50
       hibernate.order_inserts: true
@@ -25,33 +25,24 @@ spring:
     format-sql: true  # Optional: to format the SQL output
 
   batch:
+    job:
+      enabled: false   # the job is launched once by the CommandLineRunner, not on startup
     jdbc:
       initialize-schema: always
   liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    change-log: classpath:db.changelog/master.yml
   application:
-    name: "dps"
+    name: "store"
 dynamodb:
   endpoint-url: "http://localhost:4566"
   endpoint-region: "us-east-1"
+  access-key: "test"
+  access-secret-key: "test"
 resource:
   prefix: "dev"
 
 migration:
-  savingsAccountStepConfig:
-    numberOfPartitions: 4
-    chunkSize: 10
-    numberOfThreads: 5
-    enabled: true
-
-  nomineeStepConfig:
-    numberOfPartitions: 5
-    chunkSize: 25
-    numberOfThreads: 6
-    enabled: true
-
-  transactionStepConfig:
-    numberOfPartitions: 4
-    chunkSize: 10
-    numberOfThreads: 4
-    enabled: true
+  productStepConfig:
+    numberOfPartitions: 4   # TotalSegments: the table is scanned as 4 non-overlapping segments (0..3)
+    chunkSize: 25           # items per transaction written to Postgres
+    numberOfThreads: 4      # workers scanning segments in parallel

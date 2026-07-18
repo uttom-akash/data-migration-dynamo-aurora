@@ -8,13 +8,10 @@ services:
       - "127.0.0.1:4510-4559:4510-4559"
     environment:
       - DEBUG=1
+      # 10% of DynamoDB calls fail with ProvisionedThroughputExceededException,
+      # demonstrating that the AWS SDK's built-in retry handles throttling.
       - DYNAMODB_ERROR_PROBABILITY=0.1
-      - LAMBDA_EXECUTOR=docker-reuse
-      - SQS_ENDPOINT_STRATEGY=off
-      - SERVICES=s3,sqs,ssm
-      - DOCKER_HOST=unix:///var/run/docker.sock
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - SERVICES=dynamodb
 
   postgres:
     image: postgres:17.2-alpine
@@ -36,4 +33,3 @@ services:
       retries: 5
 volumes:
   postgres_data:
-  redis_data:

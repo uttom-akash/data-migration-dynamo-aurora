@@ -1,11 +1,20 @@
 #!/bin/bash
+set -e
+cd "$(dirname "$0")"
 
-clear
 echo "starting docker for savings-dps"
-docker-compose up -d
+docker compose up -d --wait
 echo "started docker for savings-dps"
-echo "database commands execution started"
-sh config/dynamodb/dynamodb.sh
-echo "database commands execution complete"
 
-DYNAMO_ENDPOINT=http://localhost:4566 dynamodb-admin --open
+echo "creating DynamoDB tables"
+bash dynamodb.sh
+echo "creating DynamoDB tables complete"
+
+echo "seeding sample data"
+bash seed-data.sh
+echo "seeding complete"
+
+# optional local DynamoDB UI (npm install -g dynamodb-admin)
+if command -v dynamodb-admin >/dev/null 2>&1; then
+    DYNAMO_ENDPOINT=http://localhost:4566 dynamodb-admin --open
+fi

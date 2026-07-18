@@ -77,9 +77,6 @@ public class PostgresWriter {
                             if (value.getClass().isEnum()) {
                                 value = value.toString(); // Convert enum to its name (string)
                             }
-                            if(columnName.equals(":") || columnName.equals("")){
-                                System.out.println();
-                            }
                             params.put(columnName, value);
                         }
                     } catch (IllegalAccessException e) {
@@ -90,18 +87,6 @@ public class PostgresWriter {
         }
 
         return params;
-    }
-
-    protected <EntityType extends  BaseEntity> void merge(EntityType currentEntity, EntityType existingEntity){
-        if(existingEntity !=null) {
-            currentEntity.setVersion(existingEntity.getVersion() == null ? 0 : existingEntity.getVersion());
-            currentEntity.setId(existingEntity.getId());
-            entityManager.merge(currentEntity);
-        }
-        else {
-            currentEntity.setVersion(0);
-            entityManager.persist(currentEntity);
-        }
     }
 }
 
