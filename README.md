@@ -4,6 +4,11 @@ Reads a DynamoDB table in **distributed parallel batches** and migrates it into 
 
 Medium blog: [Reading Millions of DynamoDB Records with Parallel Scan](https://medium.com/@akash2077/reading-millions-of-dynamodb-records-in-distributed-parallel-batches-319f16cd838b)
 
+<p align="center">
+  <img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*P30hJhtu-WKTKvel6VuIWA.png" alt="DynamoDB Parallel Scan Architecture" width="900">
+</p>
+
+
 ## How it works
 
 ### Segmented parallel scan
